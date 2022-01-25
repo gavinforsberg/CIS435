@@ -1,0 +1,101 @@
+ver 6ae65b4c607f1eef3/redhat.java/jdt_ws/jdt.ls-java-project/bin" phase1Base.Dri 
+********************************************
+
+CASE #0_1 | Initialize Sender (Random Data) 
+
+********************************************
+
+
+--- Step #1: START - Sender generates   | ----------------------------- 
+   | Sender {name=Amy, msg=53, ks=591, hashBase=329, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): 53
+   | Random Session Key (Ks): 591
+   | Choose hash function with (hashBase): 329
+--- Step #1: END of this Step           | ----------------------------- 
+
+
+--- Step #2: START - getRSAKeys()       | ----------------------------- 
+--- Step #2-1: Run RSA ------------
+       |Run Cryptography --------
+       |RSA{p=61657, q=59957, n=3696768749, z=3696647136, e=227, d=895663403}
+
+--- Step #2-2: Gets RSA keys------------
+       |pubKey: [3696768749, 227]
+       |privateKey: [3696768749, 895663403]
+--- Step #2: END of getRSAKeys()        | ----------------------------- 
+
+==> Sender's Status | Sender {name=Amy, msg=53, ks=591, hashBase=329, pubKey=[3696768749, 227], privateKey=[3696768749, 895663403]}
+
+**********************************************
+
+CASE #0_2 | Initialize Receiver (Random Data) 
+
+**********************************************
+
+
+--- Step #1: START - Receiver generates | ----------------------------- 
+   | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): null
+   | Random Session Key (Ks): null
+   | Choose hash function with (hashBase): null
+--- Step #1: END of this Step           | ----------------------------- 
+
+
+--- Step #2: START - getRSAKeys()       | ----------------------------- 
+--- Step #2-1: Run RSA ------------
+       |Run Cryptography --------
+       |RSA{p=48337, q=33587, n=1623494819, z=1623412896, e=139, d=724112227}
+
+--- Step #2-2: Gets RSA keys------------
+       |pubKey: [1623494819, 139]
+       |privateKey: [1623494819, 724112227]
+--- Step #2: END of getRSAKeys()        | ----------------------------- 
+
+==> Receiver's Status | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[1623494819, 139], privateKey=[1623494819, 724112227]}
+
+************************************************************************************************************************************************************************
+
+CASE #2: Using public-key cryptography, suppose Sender wants to send a message to Receiver and Receiver wants to be sure that the message was indeed sent by the Sender.
+
+************************************************************************************************************************************************************************
+
++++++++++++++++++
+
+Sender Operations
+
++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Sender {name=Amy, msg=53, ks=591, hashBase=329, pubKey=[3696768749, 227], privateKey=[3696768749, 895663403]}
+
+   | Sub-Step #1: Sender should encrypt the message with their private key and send the encrypted message
+   | Sub-Step #1: Sender should Pa-(Msg)-> cipher
+
+       |------------------Start | senderOperationsCase2 ----------------
+       |receiverPrivateKeyN = 3696768749
+       |receiverPrivateKeyD = 895663403
+       |cipher = 779469448
+       |------------------End | senderOperationsCase2 ----------------
+==> Sender sends out cipher = | 779469448
+
++++++++++++++++++++
+
+Receiver Operations
+
++++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[1623494819, 139], privateKey=[1623494819, 724112227]}
+       |Receiver receives cipher = 779469448
+
+   | Sub-Step #1: Receiver should decrypt the cipher with the sender's public key
+   | Sub-Step #1: Receiver should Pa+(cipher) =  Msg
+
+       |------------------ Start | receiverOperationsCase2 ----------------
+       |decryptedMsg = 53
+       |Receiver {name=Bob, msg=53, ks=null, hashBase=null, pubKey=[1623494819, 139], privateKey=[1623494819, 724112227]}
+       |------------------ End | receiverOperationsCase2 ----------------
+
+==> Receiver receives and decrypt msg = | 53
+
+bash-3.2$ 

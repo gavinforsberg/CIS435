@@ -1,0 +1,164 @@
+﻿Initializing SENDER and RECEIVER
+
+
+       |Run Cryptography --------
+       |RSA{p=62687, q=54323, n=3405345901, z=3405228892, e=211, d=1775237811}
+        Initialized SENDER: |Sender {name=Amy, msg=null, ks=null, hashBase=null, pubKey=[3405345901, 211], privateKey=[3405345901, 1775237811]}
+
+
+       |Run Cryptography --------
+       |RSA{p=64483, q=40531, n=2613560473, z=2613455460, e=131, d=1556103251}
+        Initialized RECEIVER: |Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[2613560473, 131], privateKey=[2613560473, 1556103251]}
+
+
+CASE 3: Random Data and NO Hack
+        Sender status: |Sender {name=Amy, msg=782, ks=621, hashBase=123, pubKey=[3405345901, 211], privateKey=[3405345901, 1775237811]}
+        Receiver status: |Receiver {name=Bob, msg=null, ks=null, hashBase=123, pubKey=[2613560473, 131], privateKey=[2613560473, 1556103251]}
+++++++++++++++++++++++++++++++++++++++++
+
+
+Start of Sender Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
+
+
+| SecMsgProtocol (SSL) is READY to serve |
+
+
+----------------------------------------
+
+
+---Step 1: Sender generates message: m = 782
+
+
+---Step 2: Sender hashes message: H(m) = 44
+
+
+---Step 3: Sign H(m) with sender's private key and generate digital signature:
+Ka-(H(m)) = 2240395598
+
+
+---Step 4: Generate a session key: Ks = 621
+
+
+---Step 5: encrypt Ks with receiver's public key using RSA algorithm:
+Kb+(Ks) = 151643065
+>>>Set packet encryptedKs to 151643065
+
+
+---Step 6: encrypt message m with session key and symmetric algorithm:
+Ks(m) = 1403
+>>>Set packet cipher to 1403
+
+
+---Step 7: encrypt sender's digital signature Ka-(H(m)) using session key (ks) and symmetric algorithm
+Ks(Ka-(H(m))) = 2240396219
+>>>Set packet encrypted digital signature to 2240396219
+
+
+---Step 8: the packet to be sent on to Internet is:
+Packet:
+        Cipher 'Ks(m)' = 1403
+        Digital Signature 'Ks(Ka-(H(m)))' = 2240396219
+        Encrypted Ks 'Kb+(Ks)' = 151643065
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+End of Sender Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+==> Sender sends packet to Network:
+Packet:
+        Cipher 'Ks(m)' = 1403
+        Digital Signature 'Ks(Ka-(H(m)))' = 2240396219
+        Encrypted Ks 'Kb+(Ks)' = 151643065
+
+
+
+
+
+
+|     START of the Internet       |
+|                                 |
+|                                 |
+     packet in transmission  
+|                                 |
+|                                 |
+|                                 |
+|                                 |
+       packet arrives        
+|                                 |
+|                                 |
+|     END of the Internet         |
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+Start of Receiver Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
+
+
+| SecMsgProtocol (SSL) is READY to serve |
+
+
+----------------------------------------
+
+
+--Step 1: Receive the packet from internet rcvPacket
+
+
+--Step 2: Split the Packet
+pk.cipher 'Ks(m)' = 1403
+pk.digitalSignature 'Ks(Ka-(H(m)))' = 2240396219
+pk.encryptedKs 'Kb(Ks)' = 151643065
+
+
+---Step 3: Decrypt Kb+(Ks) with Receiver's private key 'Kb-'
+Receiver: the encryptedKs 'Kb+(Ks)' is: 151643065
+After decrypting with receiver's privateky 'Kb-', get Ks = 621
+
+
+--Step 4: decrypt pk.cipher, i.e., 'Ks(m)' using Ks which is gotten from step 3: 1403
+After decryption receiver gets messgae 'm' = 782
+
+
+--Step 5: Decrypt Ks(Ka-(H(m)))' with 'Ks' gotten from step 3, Ks(Ka-(H(m))) = 2240396219
+and get the digital signature 'Ka-(H(m))' = 2240395598
+
+
+--Step 6: Decrypt 'Ka-(H(m))' from sender's public key 'Ka+()'
+The decrypted message digest 'H(m)' = Ka+(Ka-(H(m))) = 44
+
+
+--Step 7: Hash message m from step 4 'm' = 782
+The hash result H(m) = 44
+
+
+---Step 8: Compare results from step 6 and step 7, if they match then accept otherwise discards
+The packet has passed through the integrity checking and is accepted!
+
+
+==> Receiver decrypts msg: 782
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+End of Receiver Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+bash-3.2$

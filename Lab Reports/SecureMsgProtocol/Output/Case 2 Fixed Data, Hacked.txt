@@ -1,0 +1,164 @@
+﻿Initializing SENDER and RECEIVER
+
+
+       |Run Cryptography --------
+       |RSA{p=47441, q=40039, n=1899490199, z=1899402720, e=151, d=1584932071}
+        Initialized SENDER: |Sender {name=Amy, msg=null, ks=null, hashBase=null, pubKey=[1899490199, 151], privateKey=[1899490199, 1584932071]}
+
+
+       |Run Cryptography --------
+       |RSA{p=48779, q=40801, n=1990231979, z=1990142400, e=251, d=475731251}
+        Initialized RECEIVER: |Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[1990231979, 251], privateKey=[1990231979, 475731251]}
+
+
+CASE 2: Fixed Data WITH Hack
+        Sender status: |Sender {name=Amy, msg=17, ks=5, hashBase=13, pubKey=[1899490199, 151], privateKey=[1899490199, 1584932071]}
+        Receiver status: |Receiver {name=Bob, msg=null, ks=null, hashBase=13, pubKey=[1990231979, 251], privateKey=[1990231979, 475731251]}
+++++++++++++++++++++++++++++++++++++++++
+
+
+Start of Sender Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
+
+
+| SecMsgProtocol (SSL) is READY to serve |
+
+
+----------------------------------------
+
+
+---Step 1: Sender generates message: m = 17
+
+
+---Step 2: Sender hashes message: H(m) = 4
+
+
+---Step 3: Sign H(m) with sender's private key and generate digital signature:
+Ka-(H(m)) = 352309719
+
+
+---Step 4: Generate a session key: Ks = 5
+
+
+---Step 5: encrypt Ks with receiver's public key using RSA algorithm:
+Kb+(Ks) = 582552213
+>>>Set packet encryptedKs to 582552213
+
+
+---Step 6: encrypt message m with session key and symmetric algorithm:
+Ks(m) = 22
+>>>Set packet cipher to 22
+
+
+---Step 7: encrypt sender's digital signature Ka-(H(m)) using session key (ks) and symmetric algorithm
+Ks(Ka-(H(m))) = 352309724
+>>>Set packet encrypted digital signature to 352309724
+
+
+---Step 8: the packet to be sent on to Internet is:
+Packet:
+        Cipher 'Ks(m)' = 22
+        Digital Signature 'Ks(Ka-(H(m)))' = 352309724
+        Encrypted Ks 'Kb+(Ks)' = 582552213
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+End of Sender Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+==> Sender sends packet to Network:
+Packet:
+        Cipher 'Ks(m)' = 22
+        Digital Signature 'Ks(Ka-(H(m)))' = 352309724
+        Encrypted Ks 'Kb+(Ks)' = 582552213
+
+
+
+
+
+
+|     START of the Internet       |
+|                                 |
+|                                 |
+     packet in transmission  
+|                                 |
+|                                 |
+XXXXX   packet gets hacked   XXXXXX
+|                                 |
+|                                 |
+       packet arrives        
+|                                 |
+|                                 |
+|     END of the Internet         |
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+Start of Receiver Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
+
+
+| SecMsgProtocol (SSL) is READY to serve |
+
+
+----------------------------------------
+
+
+--Step 1: Receive the packet from internet rcvPacket
+
+
+--Step 2: Split the Packet
+pk.cipher 'Ks(m)' = 32
+pk.digitalSignature 'Ks(Ka-(H(m)))' = 352309724
+pk.encryptedKs 'Kb(Ks)' = 582552213
+
+
+---Step 3: Decrypt Kb+(Ks) with Receiver's private key 'Kb-'
+Receiver: the encryptedKs 'Kb+(Ks)' is: 582552213
+After decrypting with receiver's privateky 'Kb-', get Ks = 5
+
+
+--Step 4: decrypt pk.cipher, i.e., 'Ks(m)' using Ks which is gotten from step 3: 32
+After decryption receiver gets messgae 'm' = 27
+
+
+--Step 5: Decrypt Ks(Ka-(H(m)))' with 'Ks' gotten from step 3, Ks(Ka-(H(m))) = 352309724
+and get the digital signature 'Ka-(H(m))' = 352309719
+
+
+--Step 6: Decrypt 'Ka-(H(m))' from sender's public key 'Ka+()'
+The decrypted message digest 'H(m)' = Ka+(Ka-(H(m))) = 4
+
+
+--Step 7: Hash message m from step 4 'm' = 27
+The hash result H(m) = 1
+
+
+---Step 8: Compare results from step 6 and step 7, if they match then accept otherwise discards
+
+
+The packet did not pass the integrity checking and is not accepted!
+
+
+++++++++++++++++++++++++++++++++++++++++
+
+
+End of Receiver Operations
+
+
+++++++++++++++++++++++++++++++++++++++++
+bash-3.2$

@@ -1,0 +1,84 @@
+ver 6ae65b4c607f1eef3/redhat.java/jdt_ws/jdt.ls-java-project/bin" phase1Base.Dri 
+********************************************
+
+CASE #0_1 | Initialize Sender (Random Data) 
+
+********************************************
+
+
+--- Step #1: START - Sender generates   | ----------------------------- 
+   | Sender {name=Amy, msg=715, ks=474, hashBase=189, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): 715
+   | Random Session Key (Ks): 474
+   | Choose hash function with (hashBase): 189
+--- Step #1: END of this Step           | ----------------------------- 
+
+==> Sender's Status | Sender {name=Amy, msg=715, ks=932, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+**********************************************
+
+CASE #0_2 | Initialize Receiver (Random Data) 
+
+**********************************************
+
+
+--- Step #1: START - Receiver generates | ----------------------------- 
+   | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): null
+   | Random Session Key (Ks): null
+   | Choose hash function with (hashBase): null
+--- Step #1: END of this Step           | ----------------------------- 
+
+==> Receiver's Status | Receiver {name=Bob, msg=null, ks=932, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+*************************************************************************************************************************************************************************************
+
+CASE #3: Using symmetric-key cryptography, suppose Sender wants to send a secret message to the Receiver, and Receiver wants to be sure that the message was indeed the original one.
+
+*************************************************************************************************************************************************************************************
+
++++++++++++++++++
+
+Sender Operations
+
++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Sender {name=Amy, msg=715, ks=932, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+   | Sub-Step #1: Sender should apply a hash function to the message, concatenate this hash to the message and then encrypt the result with the symmetric key.
+   | Sub-Step #1: Sender should Ks[Msg, H(Msg)] -> payload
+
+       |------------------Start | senderOperationsCase3 ----------------
+       |senderHashBase = 13
+       |senderKs = 932
+       |Msg = 715
+       |H(Msg) = 0
+       |Payload = [1647, 932]
+       |------------------End | senderOperationsCase3 ----------------
+==> Sender sends out : | [1647, 932]
+
++++++++++++++++++++
+
+Receiver Operations
+
++++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Receiver {name=Bob, msg=null, ks=932, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+       |Receiver receives payload = [1647, 932]
+       |Msg received = 1647
+
+   | Sub-Step #1: Receiver should decrypt the payload with Ks, hash the message and compare that to the extracted hash from the payload.
+   | Sub-Step #1: Receiver should H{Ks(payload)['Msg']} ==  Ks(payload)['Msg']['hash']
+
+       |------------------ Start | receiverOperationsCase3 ----------------
+       |receiverHashBase = 13
+       |receiverKs = 932
+       |Hash from Ks(payload) = 0
+       |H2(Msg) = 0
+       |Hashes match. Message verified. Message is: 715
+       |Receiver {name=Bob, msg=715, ks=932, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+       |------------------ End | receiverOperationsCase3 ----------------
+
+bash-3.2$ 

@@ -1,0 +1,101 @@
+ver 6ae65b4c607f1eef3/redhat.java/jdt_ws/jdt.ls-java-project/bin" phase1Base.Dri 
+********************************************
+
+CASE #0_1 | Initialize Sender (Random Data) 
+
+********************************************
+
+
+--- Step #1: START - Sender generates   | ----------------------------- 
+   | Sender {name=Amy, msg=793, ks=463, hashBase=230, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): 793
+   | Random Session Key (Ks): 463
+   | Choose hash function with (hashBase): 230
+--- Step #1: END of this Step           | ----------------------------- 
+
+
+--- Step #2: START - getRSAKeys()       | ----------------------------- 
+--- Step #2-1: Run RSA ------------
+       |Run Cryptography --------
+       |RSA{p=61099, q=48157, n=2942344543, z=2942235288, e=167, d=933763295}
+
+--- Step #2-2: Gets RSA keys------------
+       |pubKey: [2942344543, 167]
+       |privateKey: [2942344543, 933763295]
+--- Step #2: END of getRSAKeys()        | ----------------------------- 
+
+==> Sender's Status | Sender {name=Amy, msg=793, ks=463, hashBase=230, pubKey=[2942344543, 167], privateKey=[2942344543, 933763295]}
+
+**********************************************
+
+CASE #0_2 | Initialize Receiver (Random Data) 
+
+**********************************************
+
+
+--- Step #1: START - Receiver generates | ----------------------------- 
+   | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): null
+   | Random Session Key (Ks): null
+   | Choose hash function with (hashBase): null
+--- Step #1: END of this Step           | ----------------------------- 
+
+
+--- Step #2: START - getRSAKeys()       | ----------------------------- 
+--- Step #2-1: Run RSA ------------
+       |Run Cryptography --------
+       |RSA{p=50111, q=49429, n=2476936619, z=2476837080, e=191, d=803999471}
+
+--- Step #2-2: Gets RSA keys------------
+       |pubKey: [2476936619, 191]
+       |privateKey: [2476936619, 803999471]
+--- Step #2: END of getRSAKeys()        | ----------------------------- 
+
+==> Receiver's Status | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[2476936619, 191], privateKey=[2476936619, 803999471]}
+
+*************************************************************************************************
+
+CASE #1: Suppose Sender wants to send a secret message to Receiver  using public key cryptography
+
+*************************************************************************************************
+
++++++++++++++++++
+
+Sender Operations
+
++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Sender {name=Amy, msg=793, ks=463, hashBase=230, pubKey=[2942344543, 167], privateKey=[2942344543, 933763295]}
+
+   | Sub-Step #1: Sender should encrypt the message with receiver’s public key and send the encrypted message
+   | Sub-Step #1: Sender should Pb+(Msg)-> cipher
+
+       |------------------Start | senderOperationsCase1 ----------------
+       |receiverPubKeyN = 2476936619
+       |receiverPubKeyE = 191
+       |cipher = 1410352432
+       |------------------End | senderOperationsCase1 ----------------
+==> Sender sends out cipher = | 1410352432
+
++++++++++++++++++++
+
+Receiver Operations
+
++++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[2476936619, 191], privateKey=[2476936619, 803999471]}
+       |Receiver receives cipher = 1410352432
+
+   | Sub-Step #1: Receiver should decrypt the cipher with their private key
+   | Sub-Step #1: Receiver should Pb-(cipher) =  Msg
+
+       |------------------ Start | receiverOperationsCase1 ----------------
+       |decryptedMsg = 793
+       |Receiver {name=Bob, msg=793, ks=null, hashBase=null, pubKey=[2476936619, 191], privateKey=[2476936619, 803999471]}
+       |------------------ End | receiverOperationsCase1 ----------------
+
+==> Receiver receives and decrypt msg = | 793
+
+bash-3.2$ 

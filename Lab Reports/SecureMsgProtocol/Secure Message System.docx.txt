@@ -1,0 +1,297 @@
+﻿Secure Message System
+
+
+Group #03:
+#05 | Gavin Forsberg
+#08 | Jacob Gnatz
+#16 | Georges Samaha
+
+
+Objectives
+Requirements
+Major Components
+Phase 1: Individual Testing Cases
+Phase 2: Secure Message Protocol
+Sender’s Operations
+Receiver’s Operations.
+Testing of SMS over Sender and Receiver
+Submission
+Sample Output
+
+
+Objectives
+
+
+1. In this project, you will build a secure message system to simulate secure email communication across the Internet.  
+2. You should NOT use any existing crypto liberties, not even the ones that are part of the standard java library,
+   1. You CAN refer to the “Java Cryptography Architecture (JCA) Reference Guide for designing interfaces ”https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html
+   2. You should NOT use the implementation of any existing crypto liberties to avoid “0” credit for this project. 
+
+
+3. This project aims to implement a simplified, secure facility (Shift Cipher, Hash, and RSA etc) and secure message/Email communication.
+
+
+
+
+Requirements 
+In the secure facility, you need to implement the three algorithms, i.e., symmetric, hash function, RSA algorithms, as described in class. 
+
+
+The secure facility enables 1) Confidentiality, 2) Message Integrity, and 3) Sender authentication and should be implemented in the System.  
+
+
+You may use straightforward algorithms. For example,
+* Hash function can be as simple as H(x) = x mod 13.
+* The symmetric encryption algorithm can be as simple as “Shift Cipher”.
+* RSA algorithm: You may use the ones manually calculated and provided in the ICE for testing purposes.
+
+
+Major Components
+The secure message system should include six basic components, 
+
+
+Sender
+	* generate a message (e.g., msg) 
+* process the message using the SecMsg protocol 
+* send the secure packet, i.e., a cipher to Network
+
+
+	Receiver
+	* Receives the cipher, 
+* use the SecMsg protocol to decrypt the message
+* discard/accept the message
+* Display results
+	Packet
+	* The packet unit sent and received via the Internet/Network
+	Network
+	* Simulate the Internet,
+* Can get a packet from the sender, 
+* deliver a packet to the receiver. 
+* A packet may get hacked during transmission. 
+	SecMsg
+	* Implement the secure message protocol, as shown in Tables 1  & 2,  
+* Provide an interface for the sender and the receiver to exchange messages securely.
+* Simulates SSL
+	Cryptography
+	* A simplified, secure facility (Shift Cipher, Hash, and RSA) 
+
+
+	CA
+	* validate the user’s identities and bind them to cryptographic keys
+	
+
+Phase 1: Individual Testing Cases
+
+
+
+
+Case 1: Sender (Amy) wants to send a secret message (msg) to Receiver (Bob) using public key cryptography. 
+	Sender should
+encrypt the message with receiver’s public key and send the encrypted message
+
+
+
+
+
+
+	Receiver should
+decrypt the cipher with its private key.
+
+
+
+
+
+
+
+
+	Expression: 
+
+
+Pb+(Msg)
+	Expression: 
+Pb-(Pb+(Msg)) =  Msg
+
+
+	Case 2: Using public-key cryptography, suppose Sender wants to send a message to Receiver and Receiver wants to be sure that the message was indeed sent by the Sender. 
+	Sender should
+encrypt the message with its private key and send the encrypted message to the receiver. 
+	Receiver should
+decrypt the cipher with the sender's public key.
+	Expression: 
+Pa-(Msg)
+	Expression: 
+Pa+(Pa-(Msg)) = Msg
+
+
+	Case 3: Using symmetric-key cryptography, suppose Sender wants to send a secret message to the Receiver, and Receiver wants to be sure that the message was indeed the original one. (Hints: Use Message Authentication Code (MAC))
+	Sender should
+encrypt the message with Ks then apply the hash, concatenate this hash to the encrypted message and send it.
+	Receiver should
+hash the encrypted message and compare that hash to the hash from the payload, if equal decrypt the encrypted message using Ks.
+	Expression: 
+
+
+[Ks(Msg), H(Ks(Msg))] ==> payload
+
+
+	Expression: 
+H2(Ks(Msg)) =?=  H(Ks(Msg))
+ then Ks(Ks(Msg)).
+
+
+	Case 4: Using public-key cryptography, suppose Sender wants to send a secret message to Receiver, and Receiver wants to be sure that the message was indeed sent by the Sender. Then Bob should 
+	Sender should
+encrypt the message with its private key, encrypt the result with Receiver’s public key, and then send the encrypted message to Receiver.
+	Receiver should 
+decrypt the cipher with its private key then with sender's public key
+	Expression: 
+Pb+(Pa-(Msg)) => cipher
+	Expression: 
+Pa+(Pb-(cipher)) =  Msg
+
+
+	Case 5: Suppose Sender wants to send Receiver a message with  digital signature
+	Sender should
+apply a hash function to message and then encrypts the result with its private key;    
+	Receiver should
+1. #1: applies sender’s public key to the digital signature,
+2.  #2: applies the hash function to message, and 
+3. #3: compares the results of the two operations;
+	Expression: 
+Pa-(H(Msg)) ==> cipher
+
+
+
+
+	Expression: 
+Pa+(cipher) =?=  H(Msg)
+
+
+	Case 6: Suppose Sender wants to send Receiver a message with  MAC
+	Sender should
+apply a hash function to the message concatenated with Ks then attach the hash to the message and send it.
+
+
+	Receiver should
+re-hash the message with the Ks they have and compare that to the hash received.
+
+
+
+
+
+
+	Expression: 
+[Msg, H(Msg + Ks)]-> cipher
+
+
+
+
+	Expression: 
+H(Msg + Ks) ==  H2(Msg + Ks)
+
+
+	 
+ 
+
+
+ 
+Phase 2: Secure Message Protocol
+
+
+Sender’s Operations
+
+
+Step
+	Description
+	Expression
+	1
+	Get message
+	m
+	2
+	Hash message
+	H(m)
+	3
+	Encrypt hashed message to generate the digital signature.
+	Pa-(H(m))
+	4
+	Generate random symmetric key (Ks)
+	Ks = rand() * 1000
+	5
+	Encrypt the message with Ks
+	Ks(m)
+	6
+	
+
+Encrypt the digital signature from step 3
+
+
+	Ks(Pa-(H(m)))
+	7
+	Concatenate encrypted signature from step 6 with an encrypted message from step 5
+	Ks(Pa-(H(m))) + Ks(m)
+	8
+	Encrypt key with Receiver’s public key
+	Pb+(Ks)
+	9
+	Concatenate encrypted Ks from step 8 with results from step 7 and make a packet including all the THREE fields
+	Pb+(Ks) + Ks(m)+ Ks(Pa-(H(m)))= Pkt
+	10
+	Send the packet to the Receiver via network/Internet.
+	Send(Pkt)
+	
+
+
+
+Receiver’s Operations.
+
+
+
+
+Step
+	Description
+	Expression
+	1
+	Receive packet from the Internet
+	Get(Pkt)
+	2
+	Split session key and message (and digital signature)
+	Pb+(Ks) = Pkt.split(1), Ks(m) = Pkt.split(2), Ks(Pa-(H(m))) = Pkt.split(3)
+	3
+	Decrypt session key (Ks) with its private key
+	Ks = Pb-(Pb+(Ks))
+	4
+	Decrypt message with the session key (Ks)
+	m = Ks(Ks(m))
+	5
+	Decrypt signature with the session key (Ks)
+	Pa-(H(m)) = Ks(Pa-(H(m)))
+	6
+	Hash message getting from step 4
+	Hash1 = H(m)
+	7
+	Decrypt signature from step 5 with the Sender’s public key
+	Hash2 = Pa+(Pa-(H(m)) = H(m)
+	8
+	Compare the hash results from 6 and 7
+	if(Hash1 == Hash2)
+	9
+	If hashes are equal, the message is accepted and display
+	(Hash1 == Hash2) = true
+Print(m)
+	10
+	Otherwise, discard and issue an error message
+	(Hash1 == Hash2) = false
+Print(“hashes not equal”)
+	
+
+Testing of SMS over Sender and Receiver
+Submission
+
+
+* See attachment
+
+
+Sample Output
+
+
+* See instructional video

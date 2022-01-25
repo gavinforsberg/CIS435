@@ -1,0 +1,97 @@
+ver 6ae65b4c607f1eef3/redhat.java/jdt_ws/jdt.ls-java-project/bin" phase1Base.Dri 
+********************************************
+
+CASE #0_1 | Initialize Sender (Random Data) 
+
+********************************************
+
+
+--- Step #1: START - Sender generates   | ----------------------------- 
+   | Sender {name=Amy, msg=430, ks=232, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): 430
+   | Random Session Key (Ks): 232
+   | Choose hash function with (hashBase): 13
+--- Step #1: END of this Step           | ----------------------------- 
+
+
+--- Step #2: START - getRSAKeys()       | ----------------------------- 
+--- Step #2-1: Run RSA ------------
+       |Run Cryptography --------
+       |RSA{p=56359, q=52253, n=2944926827, z=2944818216, e=251, d=1771583867}
+
+--- Step #2-2: Gets RSA keys------------
+       |pubKey: [2944926827, 251]
+       |privateKey: [2944926827, 1771583867]
+--- Step #2: END of getRSAKeys()        | ----------------------------- 
+
+==> Sender's Status | Sender {name=Amy, msg=430, ks=232, hashBase=13, pubKey=[2944926827, 251], privateKey=[2944926827, 1771583867]}
+
+**********************************************
+
+CASE #0_2 | Initialize Receiver (Random Data) 
+
+**********************************************
+
+
+--- Step #1: START - Receiver generates | ----------------------------- 
+   | Receiver {name=Bob, msg=null, ks=null, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): null
+   | Random Session Key (Ks): null
+   | Choose hash function with (hashBase): 13
+--- Step #1: END of this Step           | ----------------------------- 
+
+==> Receiver's Status | Receiver {name=Bob, msg=null, ks=null, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+*******************************************************************************
+
+CASE #5: Suppose Sender wants to send Receiver a message with digital signature
+
+*******************************************************************************
+
++++++++++++++++++
+
+Sender Operations
+
++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Sender {name=Amy, msg=430, ks=232, hashBase=13, pubKey=[2944926827, 251], privateKey=[2944926827, 1771583867]}
+
+   | Sub-Step #1: Sender should apply a hash function to the message and then encrypt the result with its private key.
+   | Sub-Step #1: Sender should Pa-(H(Msg))-> cipher
+
+       |------------------Start | senderOperationsCase5 ----------------
+       |senderPrivateKeyN = 2944926827
+       |senderPrivateKeyD = 1771583867
+       |senderHashBase = 13
+       |Msg = 430
+       |H(Msg) = 1
+       |Pa-(H(Msg)) = 1
+       |------------------End | senderOperationsCase5 ----------------
+==> Sender sends out : | [430, 1]
+
++++++++++++++++++++
+
+Receiver Operations
+
++++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Receiver {name=Bob, msg=null, ks=null, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+       |Receiver receives payload = [430, 1]
+       |Msg received = 430
+
+   | Sub-Step #1: Receiver should decrypt the cipher with the sender's public key and compare that to a hash of the message.
+   | Sub-Step #1: Receiver should Pa+(cipher) ==  H(Msg)
+
+       |------------------ Start | receiverOperationsCase5 ----------------
+       |senderPubKeyN = 2944926827
+       |senderPubKeyE = 251
+       |receiverHashBase = 13
+       |Pa+(cipher) = 1
+       |H2(Msg) = 1
+       |Hashes match. Message verified. Message is: 430
+       |Receiver {name=Bob, msg=430, ks=null, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+       |------------------ End | receiverOperationsCase5 ----------------
+
+bash-3.2$ 

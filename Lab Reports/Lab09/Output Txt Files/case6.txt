@@ -1,0 +1,75 @@
+ver 6ae65b4c607f1eef3/redhat.java/jdt_ws/jdt.ls-java-project/bin" phase1Base.Dri 
+********************************************
+
+CASE #0_1 | Initialize Sender (Random Data) 
+
+********************************************
+
+
+--- Step #1: START - Sender generates   | ----------------------------- 
+   | Sender {name=Amy, msg=734, ks=973, hashBase=22, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): 734
+   | Random Session Key (Ks): 973
+   | Choose hash function with (hashBase): 22
+--- Step #1: END of this Step           | ----------------------------- 
+
+==> Sender's Status | Sender {name=Amy, msg=734, ks=592, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+**********************************************
+
+CASE #0_2 | Initialize Receiver (Random Data) 
+
+**********************************************
+
+
+--- Step #1: START - Receiver generates | ----------------------------- 
+   | Receiver {name=Bob, msg=null, ks=null, hashBase=null, pubKey=[null, null], privateKey=[null, null]}
+   | Original Msg from Sender (msg): null
+   | Random Session Key (Ks): null
+   | Choose hash function with (hashBase): null
+--- Step #1: END of this Step           | ----------------------------- 
+
+==> Receiver's Status | Receiver {name=Bob, msg=null, ks=592, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+******************************************************************
+
+CASE #6: Suppose Sender wants to send Receiver a message with  MAC
+
+******************************************************************
+
++++++++++++++++++
+
+Sender Operations
+
++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Sender {name=Amy, msg=734, ks=592, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+
+   | Sub-Step #1: Sender should apply a hash function to the message and then encrypt the result with its private key.
+   | Sub-Step #1: Sender should Pa-(H(Msg))-> cipher
+
+       |------------------Start | senderOperationsCase6 ----------------
+       |Symmetric Key = 592
+       |senderHashBase = 13
+==> Sender sends out cipher = | [Ljava.math.BigInteger;@2626b418
+
++++++++++++++++++++
+
+Receiver Operations
+
++++++++++++++++++++
+
+   | Sub-Step #0: Initial case
+       |Receiver {name=Bob, msg=null, ks=592, hashBase=13, pubKey=[null, null], privateKey=[null, null]}
+       |Receiver receives payload = [734, 1]
+       |Msg received = 734
+
+   | Sub-Step #1: Receiver should decrypt the cipher with the sender's public key and compare that to a hash of the message.
+   | Sub-Step #1: Receiver should Pa+(cipher) ==  H(Msg)
+
+       |------------------Start | receiverOperationsCase6 ----------------
+       |Symmetric Key = 592
+       |senderHashBase = 13
+       |Hashes match. Message verified. Message is: 734
+bash-3.2$ 
